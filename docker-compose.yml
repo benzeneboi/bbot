@@ -2,15 +2,15 @@ version: '3'
 services:
   web:
     build:
-      context: ./bb
+      context: ./backend
     ports:
       - "5000:5000"
     command: gunicorn app:app -b 0.0.0.0:5000
   client:
     build:
-      context: ./betbot_frontend
+      context: ./frontend
     volumes:
-      - ./betbot_frontend:/app
+      - ./frontend:/app
     ports:
       - "3000:3000"
     depends_on:
