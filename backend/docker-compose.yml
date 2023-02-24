@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    #command: flask --app app run --host=0.0.0.0  #
+    command: gunicorn -b 0.0.0.0:5000 app:app #uvicorn app:app --host 0.0.0.0 --port 5000 --reload 
+    volumes:
+      - ../bb:/app
+    ports:
+      - 5000:5000
+    env_file:
+      - ./.env.dev
+    depends_on:
+      - db
+  db:
+    image: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=bb_test
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=betbotapp
+
+  react-app:
+    build: .
+    volumes:
+      - ../betbot_frontend:/app
+    ports: 
+      - 3000:3000
+
+volumes:
+  postgres_data:
+

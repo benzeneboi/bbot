@@ -1,0 +1,13 @@
+.env
+venv/
+venv2/
+tests.py
+
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+
+
+*.so
+*.log

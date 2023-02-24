@@ -1,0 +1,27 @@
+version: '3'
+services:
+  web:
+    build:
+      context: ./bb
+    ports:
+      - "5000:5000"
+    command: gunicorn app:app -b 0.0.0.0:5000
+  client:
+    build:
+      context: ./betbot_frontend
+    volumes:
+      - ./betbot_frontend:/app
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+  db:
+    image: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=bb_test
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=betbotapp
+volumes:
+  postgres_data:
