@@ -2,7 +2,7 @@ import uvicorn
 import sample_data
 import os
 
-from backend import create_app, db
+from src import create_app, db
 from flask_migrate import Migrate
 from betbot_backend.models import User, Consideration, BotLog
 from dotenv import load_dotenv
