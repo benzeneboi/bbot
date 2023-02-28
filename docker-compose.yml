@@ -6,15 +6,16 @@ services:
     ports:
       - "5000:5000"
     command: gunicorn app:app -b 0.0.0.0:5000
+    depends_on:
+      - db
   client:
     build:
       context: ./frontend
+      dockerfile: Dockerfile
     volumes:
       - ./frontend:/app
     ports:
       - "3000:3000"
-    depends_on:
-      - db
   db:
     image: postgres
     volumes:

@@ -1,6 +1,6 @@
 import graphene
 import subprocess
-from betbot_backend import db
+from src import db
 from ..graphql.objects import UserObject as User, \
     ConsiderationsObject as Considerations
 from ..models import User as UserModel, \

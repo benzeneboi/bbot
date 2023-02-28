@@ -4,7 +4,7 @@ import os
 
 from src import create_app, db
 from flask_migrate import Migrate
-from betbot_backend.models import User, Consideration, BotLog
+from src.models import User, Consideration, BotLog
 from dotenv import load_dotenv
 
 def populate_db(tables=('Consideration', 'User', 'BotLog')):

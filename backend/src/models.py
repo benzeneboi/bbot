@@ -1,4 +1,4 @@
-from backend import db
+from . import db
 from sqlalchemy.ext.hybrid import hybrid_property
 import sqlalchemy as sa
 import datetime

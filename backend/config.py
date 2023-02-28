@@ -1,4 +1,7 @@
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 class Config:
    SQLALCHEMY_TRACK_MODIFICATIONS = False
@@ -9,9 +12,9 @@ class Config:
 
 class DevelopmentConfig(Config):
    DEBUG=True
-   SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
+   SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL2')
    # Docker: 'postgresql://bb_test:password@db:5432/betbotapp'
-
+   # local: os.getenv('DATABASE_URL')
 class TestingConfig(Config):
    DEBUG = True
    TESTING = True
