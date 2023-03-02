@@ -17,16 +17,18 @@ COPY . .
 RUN npm run build
 
 # Use an official Node.js runtime as the base image for the runtime stage
-FROM node:14-alpine AS runtime-stage
+FROM nginx:1.21.0-alpine as production
 
-# Set the working directory to /app
-WORKDIR /app
+ENV NODE_ENV production
 
-# Copy the production-ready code from the build stage to the working directory
-COPY --from=build-stage /app/build ./build
+WORKDIR /usr/share/nginx/html
 
-# Install serve to run the production-ready code
-RUN npm install -g serve
+RUN rm -rf ./*
 
-# Specify the command to run when the container starts
-CMD ["serve", "-s", "build", "-l", "3000"]
+COPY --from=build-stage /app/build .
+
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+EXPOSE 3000
+
+CMD [ "nginx", "-g", "daemon off;" ]
