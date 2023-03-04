@@ -5,18 +5,6 @@ from flask_sqlalchemy import SQLAlchemy
 from config import config
 from flask_graphql import GraphQLView
 
-import sqlalchemy
-from sqlalchemy.orm import (scoped_session, sessionmaker, relationship, backref)
-from sqlalchemy.ext.declarative import declarative_base
-
-""" engine = sqlalchemy.create_engine("a")
-
-db_session = scoped_session(sessionmaker())
-
-Base = declarative_base()
-Base.query = db_session.query_property() """
-
-
 
 db = SQLAlchemy()
 
