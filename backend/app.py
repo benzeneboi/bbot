@@ -7,34 +7,33 @@ from flask_migrate import Migrate
 from src.models import User, Consideration, BotLog
 from dotenv import load_dotenv
 
-def populate_db(tables=('Consideration', 'User', 'BotLog')):
+
+def populate_db(table_names=('Consideration', 'User', 'BotLog')):
     """
     Populates the database with sample data
     : Args
         : tables - required tables to populate with data\
         otherwise empty tables will be created
     """
-    for record in sample_data.considerations:
-        # keys in each record should match model attribute names
-        db.session.add(Consideration(**record)) # d={'team_1': '', ...}
-
-    for record in sample_data.users:
-        db.session.add(User(**record))
-
-    for record in sample_data.bot_log:
-        db.session.add(BotLog(**record))
+    def is_table_empty(table):
+        return db.session.query(table).count() == 0
     
+    data = (sample_data.considerations, sample_data.users, sample_data.bot_log)
+    tables = (Consideration, User, BotLog)
+    for table_name, table, s_data in zip(table_names, tables, data):
+        if not is_table_empty(table_name):
+            app.logger.info(f'{table_name} table is not empty. continuing...')
+            continue
+        for record in s_data:
+            app.logger.info(f'{table_name} table is empty. Inserting sample record : {record}')
+            db.session.add(table(**record))
+            
     db.session.commit()
+
 
 load_dotenv()
 print(os.getenv("DATABASE_URL"))
 app = create_app('development')
-
-
-
-#dispatcher = DispatcherMiddleware(app.wsgi_app, {})
-#run_simple('0.0.0.0', 5000, dispatcher, use_reloader=False, use_evalex=False)
-
 migrate = Migrate(app, db)
 
 @app.before_first_request
