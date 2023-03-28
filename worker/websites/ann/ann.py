@@ -17,6 +17,7 @@ from selenium.common.exceptions import NoSuchElementException
 from collections import namedtuple
 from dotenv import load_dotenv
 
+
 load_dotenv()
 
 
@@ -178,6 +179,11 @@ class ANN:
         self.recent_data = data
 
         return data
+    
+    def hash_data(self, data):
+        """
+        Checks if data is duplicate
+        """
 
     def find_bets_within_window(self, data, window=10):
         """

@@ -3,7 +3,6 @@ import os
 import smtplib, ssl
 from email.mime.text import MIMEText
 from dotenv import load_dotenv
-import yagmail
 
 EMAIL = {"header": "Bet Notification: A recommended game is occuring in 10 minutes."}
 
