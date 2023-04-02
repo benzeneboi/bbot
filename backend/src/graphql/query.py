@@ -45,9 +45,10 @@ class Query(graphene.ObjectType):
             query = query.filter(UserModel.email.contains(email))# == email)
         return query.all()
 
-    def resolve_considerations(self, info, id=None):
+    def resolve_considerations(self, info, id=None, gdt=None, team1=None, team2=None):
         query = Considerations.get_query(info)
         try:
+            
             return query.all()
         except ProgrammingError as pe:
             print("Error")

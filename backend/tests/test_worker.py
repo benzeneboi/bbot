@@ -1,5 +1,5 @@
 # test_worker.py
-# test script to test graphql funcrtionality
+# test script to test graphql functionality
 
 import time
 import os

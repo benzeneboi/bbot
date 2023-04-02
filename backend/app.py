@@ -8,7 +8,7 @@ from src.models import User, Consideration, BotLog
 from dotenv import load_dotenv
 
 
-def populate_db(table_names=('Consideration', 'User', 'BotLog')):
+def populate_db(table_names=('considerations', 'users', 'botlog')):
     """
     Populates the database with sample data
     : Args
@@ -20,10 +20,12 @@ def populate_db(table_names=('Consideration', 'User', 'BotLog')):
     
     data = (sample_data.considerations, sample_data.users, sample_data.bot_log)
     tables = (Consideration, User, BotLog)
+
     for table_name, table, s_data in zip(table_names, tables, data):
-        if not is_table_empty(table_name):
+        if not is_table_empty(table):
             app.logger.info(f'{table_name} table is not empty. continuing...')
             continue
+
         for record in s_data:
             app.logger.info(f'{table_name} table is empty. Inserting sample record : {record}')
             db.session.add(table(**record))
@@ -32,7 +34,7 @@ def populate_db(table_names=('Consideration', 'User', 'BotLog')):
 
 
 load_dotenv()
-print(os.getenv("DATABASE_URL"))
+#print(os.getenv("DATABASE_URL"))
 app = create_app('development')
 migrate = Migrate(app, db)
 
@@ -46,10 +48,6 @@ def make_shell_context():
     return dict(db=db, User=User, Consideration=Consideration)
 
 if __name__ == '__main__':
-    #run_simple('0.0.0.0', 5000, dispatcher, use_reloader=False, use_evalex=False)
-    #app()
-    #app.run(host='0.0.0.0')
-    #app.wsgi_app = DispatcherMiddleware(app.wsgi_app)
     uvicorn.run(app.wsgi_app, host="0.0.0.0", port=8000)
 
 

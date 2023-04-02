@@ -28,13 +28,6 @@ def get_env_var(key):
         raise Exception(f"Missing {key} environment variable.")
 
 
-def verifywebdriver(func):
-    def wrap(obj, **kwargs):
-        if obj.wd is None:
-            raise Exception
-        func(obj, **kwargs)
-    return wrap
-
 Credentials = namedtuple("Credentials", ["username", "password"])
 creds = Credentials(username=get_env_var("ANN_USERNAME"), password=get_env_var("ANN_PASSWORD"))
 
@@ -64,7 +57,6 @@ class ANN:
                 service=FirefoxService(GeckoDriverManager().install())
             )
 
-    #@verifywebdriver
     def login(self):
         """perform login procedure on actionnetwork
             - Go to the root url
@@ -89,7 +81,6 @@ class ANN:
         password.send_keys(self.credentials.password + Keys.ENTER)
         time.sleep(6)
 
-    #@verifywebdriver
     def go_to(self, url):
         self.wd.get(url)
         time.sleep(5)
@@ -158,18 +149,18 @@ class ANN:
         3. finds all link text in the container (to extract sport type and year)
         4. prunes the div text data for relevant data
         5. extracts year and sport types from link text
-        6. returns dictionary with relevant sport data
+        6. returns dictionary with relevant sport data in the format {sport, team_1, team_2, game_date_time, bet_window}
         """
         if url != self.wd.current_url:
             self.go_to(url)
-        container = self.wd.find_element(By.CLASS_NAME, "my-systems__desktop")
-        link_elems = container.find_elements(By.TAG_NAME, "a")
-        divs = container.find_elements(By.TAG_NAME, "div")
-        div_text = [div.text for div in divs]
-        links = [i.get_attribute('href') for i in link_elems]
-        data = self._prune(div_text)
+        container   = self.wd.find_element(By.CLASS_NAME, "my-systems__desktop")
+        link_elems  = container.find_elements(By.TAG_NAME, "a")
+        divs        = container.find_elements(By.TAG_NAME, "div")
+        div_text    = [div.text for div in divs]
+        links       = [i.get_attribute('href') for i in link_elems]
+        data        = self._prune(div_text)
         sport_types = self._get_sport_types(links)
-        years = self._get_years(links)
+        years       = self._get_years(links)
         for entry, sport, year in zip(data, sport_types, years):
             date = year + "/" + entry["date"]
             date_time = self._convert_to_datetime(date, entry["time"])
@@ -184,14 +175,41 @@ class ANN:
         """
         Checks if data is duplicate
         """
+    
+    def entry_in_db(self, entry) -> bool:
+        f'''
+        Checks if the entry is already in the database
+        query {{
+            considerations() {{
+                
+            
+            }}
+        }}
+        '''
 
     def find_bets_within_window(self, data, window=10):
         """
         After pruning and formatting the data, 
             check whether any bets should be made
         : Args
-            : data - pruned and formatted data
+            : data - pruned and formatted data {'sport', 'team_1', 'team_2', 'game_date_time'}
+            : window - the time window in minutes to check within
         """
+        window = datetime.timedelta(minutes=get_env_var('BET_WINDOW'))
+        for dat in data:
+            curr_delta = dat['game_date_time'] - datetime.datetime.now()
+            if curr_delta <= window and curr_delta > 0:
+                """
+                if entry is not in the database
+                    Add entry to db
+                    Send notfication email
+                """
+                if self.entry_in_db(dat):
+                    continue
+                self.update_database(dat)
+                
+
+    
 
     def monitor_data(self, refresh_time=2):
         """
@@ -201,7 +219,7 @@ class ANN:
             data = self.get_data()
             print(data)
             self.update_database(data)
-            time.sleep(refresh_time*60)
+            time.sleep(refresh_time*60) # 2 minutes
 
     def update_database(self, data):
         """
@@ -235,7 +253,7 @@ class ANN:
             print("r.content", r.content)
 
     def start(self):
-        """sequentially calls functions `login` and starts continuous \
+        """sequentially calls functions `login()` and starts continuous \
         scraping -> pruning -> databse modification"""
         self.start_webdriver()
         self.login()

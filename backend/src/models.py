@@ -25,7 +25,7 @@ class Consideration(db.Model):
     sport = db.Column(db.String(40))
     game_date_time = db.Column(db.DateTime(timezone=True))#db.Column(db.String)#
     curr_date_time = db.Column(db.DateTime(timezone=True), server_default=sa.text('NOW()'))#db.Column(db.String)
-    
+    #notified = db.Column(db.Boolean)
     #game_status = db.Column(db.String(20)) # passed/upcoming
     #sa.Interval()
     #sa.DateTime()
